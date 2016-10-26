@@ -1,30 +1,51 @@
-contract DSBaseNoFallback {
+/*
+   Copyright 2016 Nexus Development
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+pragma solidity ^0.4.2;
+
+
+contract DSBase {
     function assert(bool condition) internal {
         if (!condition) throw;
     }
-    // largely deprecated by better tracing tools
-    function throws(bytes32 reason) internal {
-        log1(msg.sig, reason);
-        throw;
-    }
-    // this may be default in future: https://github.com/ethereum/solidity/pull/665
-    modifier noEther() {
-        assert( msg.value == 0 );
-        _
-    }
-    // N.B. In older solidity versions, this cannot be used on functions
-    // with a `return` statement. This restriction is lifted now
-    // (https://github.com/ethereum/solidity/commit/9c8310)
-    bool _mutex;
+
+    bool _ds_mutex;
     modifier mutex() {
-        assert(!_mutex);
-        _mutex = true;
-        _
-        _mutex = false;
+        assert(!_ds_mutex);
+        _ds_mutex = true;
+        _;
+        _ds_mutex = false;
     }
 
-    // check for overflowing math. N.B. throw-on-overflow may be
-    // default in future: https://github.com/ethereum/solidity/issues/796
+    function tryExec( address target, bytes calldata, uint value)
+             mutex()
+             internal
+             returns (bool call_ret)
+    {
+        return target.call.value(value)(calldata);
+    }
+    function exec( address target, bytes calldata, uint value)
+             internal
+    {
+        assert(tryExec(target, calldata, value));
+    }
+
+    
+
+    // TODO Keep up with this https://github.com/ethereum/solidity/issues/796
     function safeToAdd(uint a, uint b) internal returns (bool) {
         return (a + b >= a);
     }
@@ -36,11 +57,5 @@ contract DSBaseNoFallback {
     function safeToMul(uint a, uint b) internal returns (bool) {
         var c = a * b;
         return (a == 0 || c / a == b);
-    }
-}
-contract DSBase is DSBaseNoFallback {
-    // TODO: eventually you'll be able to override fallbacks
-    function () {
-        throw;
     }
 }
