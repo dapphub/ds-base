@@ -1,8 +1,10 @@
 ds-base
 ===
 
-Brainstorming a sane base class. Modifiers and internal functions only, except throw-on-fallback
+Zero-overhead utility mixin: modifiers and internal functions only.
 
-* Throw on fallback
-* noEther modifier
-* assert flavors
+#### `assert`
+#### `exec`/`tryExec`
+#### `mutex`
+#### `getTime`
+#### `safeMath`
