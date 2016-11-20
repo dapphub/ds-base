@@ -43,7 +43,10 @@ contract DSBase {
         assert(tryExec(target, calldata, value));
     }
 
-    
+    // Helper for 1) test mocks and 2) be explicit about type
+    function getTime() internal returns (uint40) {
+        return uint40(block.timestamp);
+    }    
 
     // TODO Keep up with this https://github.com/ethereum/solidity/issues/796
     function safeToAdd(uint a, uint b) internal returns (bool) {
