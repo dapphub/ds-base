@@ -53,7 +53,7 @@ contract CallReceiver is Debug {
         }
         return true;
     }
-    function() {
+    function() payable {
         last_calldata = msg.data;
         last_value = msg.value;
     }
