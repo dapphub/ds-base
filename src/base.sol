@@ -29,14 +29,14 @@ contract DSBase {
         _ds_mutex = false;
     }
 
-    function tryExec( address target, bytes calldata, uint value)
+    function tryExec(address target, bytes calldata, uint value)
              mutex()
              internal
              returns (bool call_ret)
     {
         return target.call.value(value)(calldata);
     }
-    function exec( address target, bytes calldata, uint value)
+    function exec(address target, bytes calldata, uint value)
              internal
     {
         assert(tryExec(target, calldata, value));
