@@ -14,8 +14,7 @@
    limitations under the License.
 */
 
-pragma solidity ^0.4.4;
-
+pragma solidity ^0.4.8;
 
 contract DSBase {
     function assert(bool condition) internal {
@@ -30,14 +29,14 @@ contract DSBase {
         _ds_mutex = false;
     }
 
-    function tryExec( address target, bytes calldata, uint value)
+    function tryExec(address target, bytes calldata, uint value)
              mutex()
              internal
              returns (bool call_ret)
     {
         return target.call.value(value)(calldata);
     }
-    function exec( address target, bytes calldata, uint value)
+    function exec(address target, bytes calldata, uint value)
              internal
     {
         assert(tryExec(target, calldata, value));
